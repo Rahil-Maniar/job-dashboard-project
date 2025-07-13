@@ -4,66 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Job Dashboard</title>
+    <title>Comprehensive Job Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
         .filter-card { background-color: #ffffff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .job-card { margin-bottom: 1.5rem; }
+        .job-card .card-header { background-color: #e9ecef; }
+        /* Style for the key-value data list */
+        .job-data-key { font-weight: 600; color: #495057; }
+        .job-data-row { border-bottom: 1px solid #f1f1f1; padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container my-5">
         <div class="text-center mb-4">
-            <h1 class="display-5">Smart Job Dashboard</h1>
+            <h1 class="display-5">Comprehensive Job Dashboard</h1>
             <p class="lead text-muted">Found {{ job_count }} matching job opportunities.</p>
         </div>
 
-        <!-- Filter Form -->
+        <!-- Filter Form (No changes needed here) -->
         <div class="card filter-card mb-5">
             <form method="GET" action="/">
-                <!-- --- MODIFIED: Adjusted column layout (e.g., col-md-3) --- -->
                 <div class="row g-3 align-items-end">
-                    <div class="col-lg-3 col-md-6">
-                        <label for="query" class="form-label">Search Title/Skills</label>
-                        <input type="text" class="form-control" id="query" name="query" placeholder="e.g., Python Developer" value="{{ filters.query }}">
-                    </div>
-
-                    <div class="col-lg-2 col-md-6">
-                        <label for="location" class="form-label">Location</label>
-                        <select id="location" name="location" class="form-select">
-                            <option value="">All Locations</option>
-                            {% for loc in locations %}
-                                <option value="{{ loc }}" {% if filters.location == loc %}selected{% endif %}>{{ loc }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="col-lg-2 col-md-6">
-                        <label for="job_type" class="form-label">Job Type</label>
-                        <select id="job_type" name="job_type" class="form-select">
-                            <option value="">All Types</option>
-                            {% for type in job_types %}
-                                <option value="{{ type }}" {% if filters.job_type == type %}selected{% endif %}>{{ type }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- --- NEW: Recency Filter Dropdown --- -->
-                    <div class="col-lg-2 col-md-6">
-                        <label for="recency" class="form-label">Posted Within</label>
-                        <select id="recency" name="recency" class="form-select">
-                            <option value="all_time" {% if filters.recency == 'all_time' %}selected{% endif %}>All time</option>
-                            <option value="today" {% if filters.recency == 'today' %}selected{% endif %}>Last 24 hours</option>
-                            <option value="this_week" {% if filters.recency == 'this_week' %}selected{% endif %}>Last 7 days</option>
-                            <option value="this_month" {% if filters.recency == 'this_month' %}selected{% endif %}>Last 30 days</option>
-                        </select>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-12">
-                        <button type="submit" class="btn btn-primary w-100">Filter</button>
-                        <a href="/" class="btn btn-secondary w-100 mt-2">Clear All Filters</a>
-                    </div>
+                    <div class="col-lg-3 col-md-6"><label for="query" class="form-label">Search</label><input type="text" class="form-control" id="query" name="query" placeholder="e.g., Python Developer" value="{{ filters.query }}"></div>
+                    <div class="col-lg-2 col-md-6"><label for="location" class="form-label">Location</label><select id="location" name="location" class="form-select"><option value="">All Locations</option>{% for loc in locations %}<option value="{{ loc }}" {% if filters.location == loc %}selected{% endif %}>{{ loc }}</option>{% endfor %}</select></div>
+                    <div class="col-lg-2 col-md-6"><label for="job_type" class="form-label">Job Type</label><select id="job_type" name="job_type" class="form-select"><option value="">All Types</option>{% for type in job_types %}<option value="{{ type }}" {% if filters.job_type == type %}selected{% endif %}>{{ type }}</option>{% endfor %}</select></div>
+                    <div class="col-lg-2 col-md-6"><label for="recency" class="form-label">Posted Within</label><select id="recency" name="recency" class="form-select"><option value="all_time" {% if filters.recency == 'all_time' %}selected{% endif %}>All time</option><option value="today" {% if filters.recency == 'today' %}selected{% endif %}>Last 24 hours</option><option value="this_week" {% if filters.recency == 'this_week' %}selected{% endif %}>Last 7 days</option><option value="this_month" {% if filters.recency == 'this_month' %}selected{% endif %}>Last 30 days</option></select></div>
+                    <div class="col-lg-3 col-md-12"><button type="submit" class="btn btn-primary w-100">Filter</button><a href="/" class="btn btn-secondary w-100 mt-2">Clear All Filters</a></div>
                 </div>
             </form>
         </div>
@@ -71,22 +39,47 @@
         <!-- Job Listings -->
         {% for job in jobs %}
         <div class="card job-card">
-            <div class="card-body">
-                <h5 class="card-title">{{ job.job_title }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ job.company_name }}</h6>
-                <p class="card-text">
-                    <span class="badge bg-primary">{{ job.location }}</span>
-                    <span class="badge bg-secondary">{{ job.job_type }}</span>
-                    <span class="badge bg-info text-dark">{{ job.remote_work }}</span>
-                </p>
-                <p class="card-text"><strong>Experience:</strong> {{ job.experience_required }}</p>
-                <p class="card-text"><strong>Skills:</strong> {{ job.skills_required | truncate(250) }}</p>
-                {% if job.post_url and job.post_url != 'Not available' %}
-                    <a href="{{ job.post_url }}" class="btn btn-outline-primary" target="_blank">View Original Post</a>
-                {% endif %}
+            <!-- Card header for quick scanning -->
+            <div class="card-header">
+                <h5 class="mb-0">{{ job.job_title }}</h5>
+                <p class="mb-0 text-muted">{{ job.company_name }}</p>
             </div>
-            <!-- --- MODIFIED: Use the datetime object for formatting --- -->
-            <div class="card-footer text-muted">Scraped On: {{ job.processed_at.strftime('%Y-%m-%d') }}</div>
+            
+            <!-- --- MODIFIED SECTION --- -->
+            <!-- This card body will now dynamically display all fields -->
+            <div class="card-body">
+                <div class="container-fluid">
+                    <!-- Loop through every key and value in the job dictionary -->
+                    {% for key, value in job.items() %}
+                        
+                        <!-- We only show a row if the value is not empty or a default placeholder -->
+                        {% if value and value != 'Not specified' and value != 'Not available' %}
+                            
+                            <!-- Skip the title and company, as they are already in the header -->
+                            {% if key not in ['job_title', 'company_name'] %}
+                            
+                            <div class="row job-data-row">
+                                <!-- The data label (e.g., "Job Type") -->
+                                <div class="col-md-3 job-data-key">
+                                    <!-- This line makes the keys look nice: 'job_type' -> 'Job Type' -->
+                                    {{ key.replace('_', ' ').title() }}
+                                </div>
+                                
+                                <!-- The data value -->
+                                <div class="col-md-9">
+                                    {% if key == 'post_url' %}
+                                        <a href="{{ value }}" target="_blank" rel="noopener noreferrer">View Original Post</a>
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
         {% else %}
         <div class="alert alert-warning text-center">
