@@ -112,7 +112,7 @@ authenv/
 
 # Job tracker specific files
 linkedin_*.csv
-processed_jobs_*.csv
+
 *.csv
 your_linkedin_cookies.txt
 .pip_sequence.json
